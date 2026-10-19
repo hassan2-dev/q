@@ -1,0 +1,20 @@
+{
+  "name": "مصحف البيت",
+  "short_name": "المصحف",
+  "description": "مصحف للقراءة والاستماع، مع تنزيل السور للعمل بدون إنترنت",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "dir": "rtl",
+  "lang": "ar",
+  "background_color": "#081611",
+  "theme_color": "#0c221b",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

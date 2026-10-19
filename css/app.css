@@ -1,0 +1,477 @@
+@font-face {
+  font-family: "Amiri";
+  src: url("../fonts/Amiri-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Amiri";
+  src: url("../fonts/Amiri-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Aref Ruqaa";
+  src: url("../fonts/ArefRuqaa-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Aref Ruqaa";
+  src: url("../fonts/ArefRuqaa-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Tajawal";
+  src: url("../fonts/Tajawal-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Tajawal";
+  src: url("../fonts/Tajawal-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Tajawal";
+  src: url("../fonts/Tajawal-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  --night: #07140f;
+  --deep: #10281f;
+  --card: #143027;
+  --gold: #d4b072;
+  --gold-2: #f4e4c4;
+  --ink: #24180f;
+  --paper: #fbf6ec;
+  --muted: #c5d5cc;
+  --line: rgba(212, 176, 114, 0.34);
+  --scale: 1.15;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html, body { margin: 0; min-height: 100%; }
+
+body {
+  font-family: "Tajawal", "Segoe UI", Tahoma, sans-serif;
+  color: var(--gold-2);
+  background:
+    radial-gradient(ellipse at 50% -8%, rgba(212, 176, 114, 0.16), transparent 42%),
+    var(--night);
+  line-height: 1.6;
+}
+
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:disabled { opacity: 0.45; cursor: default; }
+
+.mihrab {
+  position: fixed;
+  inset: 0;
+  width: min(920px, 100%);
+  height: 100%;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  color: rgba(212, 176, 114, 0.2);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+  width: min(1080px, calc(100% - 28px));
+  margin: 0 auto;
+  padding: 22px 0 40px;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+}
+
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand h1 {
+  margin: 0;
+  font-family: "Aref Ruqaa", "Amiri", serif;
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--gold-2);
+}
+.eyebrow {
+  margin: 0;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+  font-size: 0.95rem;
+}
+
+.mark {
+  width: 62px;
+  height: 62px;
+  flex: none;
+}
+
+.net {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: #d9eccf;
+  background: rgba(18, 48, 36, 0.8);
+}
+.net.off { color: #f0d0a2; }
+
+.rule {
+  height: 1px;
+  border: 0;
+  margin: 0 0 18px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.note {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(16, 40, 31, 0.72);
+  color: var(--muted);
+}
+
+.toolbar {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.reciter, .search {
+  display: grid;
+  gap: 6px;
+  font-size: 1.02rem;
+}
+
+select, .search input {
+  width: 100%;
+  min-height: 58px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: #0d241c;
+  padding: 0 16px;
+  outline: none;
+}
+select:focus, .search input:focus, button:focus-visible {
+  box-shadow: 0 0 0 3px rgba(212, 176, 114, 0.35);
+}
+
+.filters, .home-actions, .speeds, .reader-tools, .prayer-actions, .player-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip, .text-btn, .ghost, .gold, .play, .save-btn {
+  min-height: 52px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: transparent;
+  padding: 0 16px;
+}
+.chip.on, .text-btn.on, .speeds button.on {
+  background: var(--gold);
+  color: #1b140c;
+  border-color: var(--gold);
+}
+.gold, .play {
+  background: var(--gold);
+  color: #1b140c;
+  border-color: var(--gold);
+  font-weight: 700;
+}
+.play { min-width: 148px; font-size: 1.25rem; }
+
+.resume { justify-self: start; }
+
+.list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+@media (min-width: 860px) {
+  .list { grid-template-columns: 1fr 1fr; }
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  text-align: right;
+  background: linear-gradient(180deg, rgba(22, 54, 44, 0.95), rgba(14, 38, 31, 0.95));
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 12px;
+}
+.card-open {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: center;
+  min-height: 64px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: right;
+  cursor: pointer;
+}
+.card:hover { border-color: rgba(243, 226, 196, 0.7); }
+
+.seal {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  box-shadow: inset 0 0 0 5px rgba(212, 176, 114, 0.14);
+  color: var(--gold-2);
+  font-family: "Amiri", serif;
+  font-size: 1.25rem;
+}
+.card h2 {
+  margin: 0;
+  font-family: "Amiri", serif;
+  font-size: 1.55rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.meta { margin: 2px 0 0; color: var(--muted); font-size: 0.95rem; }
+.save-btn { min-width: 92px; padding: 0 10px; }
+.save-btn.saved {
+  color: #d9eccf;
+  border-color: rgba(217, 236, 207, 0.45);
+}
+.empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 28px 10px;
+  color: var(--muted);
+}
+
+.foot {
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.foot a { color: var(--gold-2); }
+
+.reader-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.reader-head h2 {
+  margin: 0;
+  font-family: "Aref Ruqaa", serif;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.2;
+}
+.reader-tools button { min-width: 64px; font-size: 1.15rem; }
+
+.page {
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 22px;
+  padding: 28px 22px 12px;
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px #e7d7b4,
+    inset 0 0 0 11px var(--paper),
+    inset 0 0 0 12px rgba(184, 146, 74, 0.55);
+}
+.bismillah {
+  margin: 8px 0 6px;
+  text-align: center;
+  font-family: "Amiri", "Traditional Arabic", serif;
+  font-size: calc(2rem * var(--scale));
+  line-height: 2;
+  color: #6e5424;
+}
+.ayah {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 0;
+  padding: 13px 6px;
+  border-bottom: 1px solid rgba(138, 103, 48, 0.16);
+  font-family: "Amiri", "Traditional Arabic", serif;
+  font-size: calc(1.9rem * var(--scale));
+  line-height: 2.05;
+}
+.ayah-text { flex: 1; }
+.ayah-no {
+  flex: none;
+  min-width: 2.15rem;
+  height: 2.15rem;
+  margin-top: 0.55rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid #b8924a;
+  border-radius: 50%;
+  color: #8a6730;
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.player {
+  position: sticky;
+  bottom: 12px;
+  z-index: 5;
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  background: rgba(8, 22, 17, 0.94);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+.player-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+.player h2 {
+  margin: 0;
+  font-family: "Amiri", serif;
+  font-size: 1.45rem;
+}
+.player-kicker { margin: 0; color: var(--gold); }
+#seek {
+  width: 100%;
+  margin: 10px 0 4px;
+  accent-color: var(--gold);
+}
+.player-time {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  overflow: auto;
+  padding: 22px 18px;
+  background: rgba(4, 12, 9, 0.74);
+}
+.prayer, .sheet {
+  width: min(560px, 100%);
+  margin: auto;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 24px;
+  padding: 26px 22px 20px;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px #e7d7b4,
+    inset 0 0 0 10px var(--paper),
+    inset 0 0 0 11px rgba(184, 146, 74, 0.6);
+  text-align: center;
+}
+.sadaq, .to { margin: 0; color: #6e5424; }
+.prayer h2, .sheet h2 {
+  margin: 6px 0;
+  font-family: "Aref Ruqaa", serif;
+  font-size: 2.3rem;
+  line-height: 1.2;
+}
+.names {
+  margin: 0 0 8px;
+  font-family: "Aref Ruqaa", serif;
+  font-size: 1.7rem;
+  color: #6e5424;
+}
+.ornament { margin: 4px 0; color: #b8924a; letter-spacing: 0.4em; }
+.prayer-verses {
+  text-align: center;
+  font-family: "Amiri", serif;
+  font-size: 1.45rem;
+  line-height: 1.9;
+}
+.prayer-verses p { margin: 0 0 8px; }
+.prayer-actions, .sheet .actions { margin-top: 16px; justify-content: center; }
+.prayer .gold, .sheet .gold { min-width: 140px; font-size: 1.25rem; }
+.sheet { text-align: right; }
+.sheet h2, .hint { text-align: center; }
+.hint { color: #5c4a32; }
+.sheet .actions { display: grid; gap: 8px; }
+.sheet .actions button, #download-cancel { width: 100%; min-height: 56px; }
+.bar {
+  height: 10px;
+  border-radius: 999px;
+  background: #eadcbe;
+  overflow: hidden;
+  margin: 12px 0;
+}
+.bar span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: #8a6730;
+}
+
+.toast {
+  position: fixed;
+  z-index: 30;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  width: min(520px, calc(100% - 28px));
+  padding: 14px 16px;
+  text-align: center;
+  background: #24180f;
+  color: var(--paper);
+  border: 1px solid var(--gold);
+  border-radius: 14px;
+}
+body.has-player .toast { bottom: 168px; }
+
+.file-wall {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--night);
+  text-align: center;
+}
+.file-wall h1 { font-family: "Aref Ruqaa", serif; font-size: 2.4rem; }
+
+@media (max-width: 720px) {
+  .reader-head { align-items: flex-start; flex-direction: column; }
+  .ayah { font-size: calc(1.65rem * var(--scale)); }
+  .top { align-items: flex-start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; }
+}

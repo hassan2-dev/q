@@ -1,0 +1,63 @@
+{
+  "expo": {
+    "name": "مصحف البيت",
+    "slug": "mushaf-albait",
+    "owner": "hassune21",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "androidNavigationBar": {
+      "backgroundColor": "#081611",
+      "barStyle": "light-content"
+    },
+    "scheme": "mushaf",
+    "backgroundColor": "#071410",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mushaf.albait",
+      "buildNumber": "1",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "audio"
+        ],
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.mushaf.albait",
+      "backgroundColor": "#071410",
+      "softwareKeyboardLayoutMode": "resize",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#0c221b"
+      },
+      "permissions": [
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "enableBackgroundPlayback": true
+        }
+      ],
+      "expo-font",
+      "expo-splash-screen",
+      "expo-status-bar",
+      "expo-asset"
+    ],
+    "extra": {
+      "supportsRTL": true,
+      "eas": {
+        "projectId": "2fdac53a-9386-4f6e-9ea3-cab000a9f0a8"
+      }
+    }
+  }
+}
