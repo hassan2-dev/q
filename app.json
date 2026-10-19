@@ -55,7 +55,10 @@
       "expo-asset"
     ],
     "extra": {
-      "supportsRTL": true
+      "supportsRTL": true,
+      "eas": {
+        "projectId": "f70f5e98-292e-4a16-9aee-d0a2a6818564"
+      }
     }
   }
 }
