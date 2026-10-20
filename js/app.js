@@ -80,32 +80,7 @@ function reciterName(id) {
 }
 
 function streamUrl(reciter, number) {
-  return `https://cdn.islamic.network/quran/audio-surah/128/${reciter}/${number}.mp3`;
-}
-
-function proxyUrl(reciter, number) {
-  return `${location.origin}/audio/${encodeURIComponent(reciter)}/${number}.mp3`;
-}
-
-/** Fetch audio as a Blob for IndexedDB. Prefers local proxy (CORS-safe). */
-async function fetchAudioBlob(reciter, number, signal) {
-  const urls = [];
-  if (location.protocol.startsWith("http")) urls.push(proxyUrl(reciter, number));
-  urls.push(streamUrl(reciter, number));
-  let lastError = null;
-  for (const url of urls) {
-    try {
-      const response = await fetch(url, { signal });
-      if (!response.ok) throw new Error(`http ${response.status}`);
-      const blob = await response.blob();
-      if (!blob || blob.size < 2000) throw new Error("empty audio");
-      return blob;
-    } catch (error) {
-      if (error?.name === "AbortError") throw error;
-      lastError = error;
-    }
-  }
-  throw lastError || new Error("download failed");
+  return MushafDb.streamUrl(reciter, number);
 }
 
 function keyOf(reciter, number) {
@@ -316,14 +291,16 @@ function setPlaying(playing) {
 
 async function prepareAudio(number, resume) {
   const key = keyOf(state.reciter, number);
+  const kept = state.saved.has(key) || (await MushafDb.has(key));
   const blob = await MushafDb.get(key);
   if (blob) {
     setSource(URL.createObjectURL(blob));
-  } else if (!navigator.onLine) {
+  } else if (!navigator.onLine && !kept) {
     audio.removeAttribute("src");
     toast("هذي السورة مو محفوظة. نزّلها وأنت متصل.");
     return false;
   } else {
+    // Online stream, or offline via service worker cache
     setSource(streamUrl(state.reciter, number));
   }
   state.resumeTime = resume ? Number(loadProgress()?.time || 0) : 0;
@@ -352,8 +329,7 @@ async function downloadOne(number, quiet, signal) {
   const key = keyOf(state.reciter, number);
   if (state.saved.has(key)) return true;
   if (navigator.storage?.persist) navigator.storage.persist().catch(() => {});
-  const blob = await fetchAudioBlob(state.reciter, number, signal);
-  await MushafDb.put(key, blob);
+  await MushafDb.download(key, signal);
   state.saved.add(key);
   if (!quiet) toast("انحفظت السورة على الجهاز.");
   updateReciterCard();
@@ -495,8 +471,9 @@ function bind() {
       try {
         await downloadOne(number);
         renderList();
-      } catch {
-        toast("ما نزل الملف. افتح المصحف من «ابدأ المصحف» وتأكد من النت.");
+      } catch (error) {
+        console.error(error);
+        toast("تعذّر التنزيل. تأكد من الإنترنت وحاول مرة ثانية.");
         save.disabled = false;
         save.textContent = "تنزيل";
       }
@@ -537,8 +514,9 @@ function bind() {
     button.textContent = "ينزّل";
     try {
       await downloadOne(state.surah);
-    } catch {
-      toast("ما نزل الملف. افتح المصحف من «ابدأ المصحف» وتأكد من النت.");
+    } catch (error) {
+      console.error(error);
+      toast("تعذّر التنزيل. تأكد من الإنترنت وحاول مرة ثانية.");
     }
     updateSaveButton();
     updateReciterCard();

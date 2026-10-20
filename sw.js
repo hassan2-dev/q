@@ -1,4 +1,5 @@
-const CACHE = "mushaf-albait-v3";
+const CACHE = "mushaf-albait-v4";
+const AUDIO_CACHE = "mushaf-audio-v1";
 const ASSETS = [
   "./",
   "./index.html",
@@ -19,14 +20,20 @@ const ASSETS = [
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS)));
+  event.waitUntil(
+    caches.open(CACHE).then((cache) => cache.addAll(ASSETS)).catch(() => {})
+  );
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)))
+      Promise.all(
+        keys
+          .filter((key) => key !== CACHE && key !== AUDIO_CACHE)
+          .map((key) => caches.delete(key))
+      )
     )
   );
   self.clients.claim();
@@ -34,17 +41,40 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
+
+  // Offline surah audio saved via Cache API (opaque OK)
+  if (url.hostname === "cdn.islamic.network") {
+    event.respondWith(
+      (async () => {
+        const cache = await caches.open(AUDIO_CACHE);
+        const cached = await cache.match(event.request.url);
+        try {
+          const fresh = await fetch(event.request);
+          if (fresh && (fresh.ok || fresh.type === "opaque")) return fresh;
+        } catch {
+          /* use cache */
+        }
+        if (cached) return cached;
+        return Response.error();
+      })()
+    );
+    return;
+  }
+
   if (url.origin !== self.location.origin) return;
-  // Audio proxy / downloads: network only (do not poison cache with partials)
+
   if (url.pathname.startsWith("/audio/")) {
     event.respondWith(fetch(event.request));
     return;
   }
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE).then((cache) => cache.put(event.request, copy));
+        if (response && response.ok && event.request.method === "GET") {
+          const copy = response.clone();
+          caches.open(CACHE).then((cache) => cache.put(event.request, copy));
+        }
         return response;
       })
       .catch(() => caches.match(event.request).then((hit) => hit || caches.match("./index.html")))
