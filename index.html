@@ -2,94 +2,106 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#07140f">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#071410" id="theme-color">
   <title>مصحف البيت</title>
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="preload" href="fonts/Amiri-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="fonts/AmiriQuran-Regular.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
-  <svg class="mihrab" viewBox="0 0 800 1100" aria-hidden="true">
-    <path d="M150 1100 V460 C150 210 270 90 400 90 C530 90 650 210 650 460 V1100" fill="none" stroke="currentColor" stroke-width="1.5"/>
-    <path d="M190 1100 V472 C190 250 296 136 400 136 C504 136 610 250 610 472 V1100" fill="none" stroke="currentColor" stroke-width="0.8"/>
-    <path d="M400 78 L412 112 L448 124 L412 136 L400 170 L388 136 L352 124 L388 112 Z" fill="none" stroke="currentColor" stroke-width="1"/>
-  </svg>
+  <div class="sky" aria-hidden="true">
+    <svg class="sky-star s1" viewBox="0 0 64 64"><path d="M32 4 L38.5 24 L58 32 L38.5 40 L32 60 L25.5 40 L6 32 L25.5 24 Z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="32" cy="32" r="6.5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
+    <svg class="sky-star s2" viewBox="0 0 64 64"><path d="M32 4 L38.5 24 L58 32 L38.5 40 L32 60 L25.5 40 L6 32 L25.5 24 Z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="32" cy="32" r="6.5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
+    <svg class="sky-star s3" viewBox="0 0 64 64"><path d="M32 4 L38.5 24 L58 32 L38.5 40 L32 60 L25.5 40 L6 32 L25.5 24 Z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="32" cy="32" r="6.5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
+  </div>
 
-  <div class="app">
-    <header class="top">
-      <div class="brand">
-        <svg class="mark" viewBox="0 0 64 64" aria-hidden="true">
-          <path d="M32 4 L38 24 L58 32 L38 40 L32 60 L26 40 L6 32 L26 24 Z" fill="none" stroke="#d4b072" stroke-width="1.6"/>
-          <circle cx="32" cy="32" r="7" fill="none" stroke="#f4e4c4" stroke-width="1.2"/>
-        </svg>
-        <div>
-          <p class="eyebrow">القرآن الكريم</p>
+  <div class="phone">
+    <div class="app">
+      <section id="home">
+        <div class="brand">
+          <svg class="mark" viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M32 4 L38.5 24 L58 32 L38.5 40 L32 60 L25.5 40 L6 32 L25.5 24 Z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+            <circle cx="32" cy="32" r="6.5" fill="none" stroke="currentColor" stroke-width="1.2"/>
+          </svg>
+          <p class="bismillah-home" id="home-bismillah">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</p>
           <h1>مصحف البيت</h1>
+          <p class="subtitle">قراءة هادئة · مهداة للوالد والوالدة</p>
+          <button type="button" class="mode-btn" id="toggle-mode">نهاري</button>
         </div>
-      </div>
-      <p class="net" id="net">متصل</p>
-    </header>
-    <hr class="rule">
 
-    <section id="home">
-      <p class="note">بعد ما تخلص السورة، تطلع الفاتحة إلى ميعاد كاظم وعدنان لطيف.</p>
-      <div class="toolbar">
-        <label class="reciter">القارئ
-          <select id="reciter"></select>
-        </label>
-        <label class="search">ابحث عن سورة
-          <input id="query" type="search" placeholder="اكتب اسم السورة" autocomplete="off">
-        </label>
-        <div class="filters" id="filters">
-          <button type="button" class="chip on" data-filter="all">الكل</button>
-          <button type="button" class="chip" data-filter="amma">جزء عمّ</button>
-          <button type="button" class="chip" data-filter="meccan">مكية</button>
-          <button type="button" class="chip" data-filter="medinan">مدنية</button>
+        <div class="gold-rule" aria-hidden="true">
+          <span></span>
+          <svg viewBox="0 0 64 64"><path d="M32 4 L38.5 24 L58 32 L38.5 40 L32 60 L25.5 40 L6 32 L25.5 24 Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="32" cy="32" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span></span>
         </div>
-        <div class="home-actions">
-          <button type="button" class="gold" id="open-download">تنزيل للاستماع بدون نت</button>
-          <button type="button" class="text-btn resume" id="resume" hidden>كمّل التلاوة</button>
-        </div>
-      </div>
-      <div class="list" id="list"></div>
-      <p class="foot">النص العثماني والتلاوات من <a href="https://alquran.cloud/" target="_blank" rel="noopener">Al Quran Cloud</a>. خلّ نافذة التشغيل مفتوحة طول ما المصحف مفتوح، وافتحه دائمًا من نفس المتصفح حتى تبقى السور المحفوظة.</p>
-    </section>
 
-    <section id="reader" hidden>
-      <div class="reader-head">
-        <button type="button" class="text-btn" id="back">الفهرس</button>
-        <div>
-          <p class="eyebrow" id="reader-meta"></p>
-          <h2 id="reader-name"></h2>
+        <div class="dedication">
+          <p class="dedication-label">إهداء</p>
+          <p class="dedication-to">إلى الوالد والوالدة</p>
+          <p class="dedication-body">جعل الله قراءة هذا المصحف نورًا في بيوتكم، وذخرًا في ميزان حسناتكم</p>
         </div>
-        <div class="reader-tools">
-          <button type="button" id="smaller" aria-label="تصغير الخط">أ-</button>
-          <button type="button" id="larger" aria-label="تكبير الخط">أ+</button>
-          <button type="button" id="save-one" class="save-btn">تنزيل</button>
+
+        <p class="banner" id="offline-banner" hidden>بدون إنترنت · القراءة وما حُفظ من التلاوة يعملان</p>
+        <p class="notice" id="net-notice" hidden></p>
+
+        <button type="button" class="continue" id="resume">
+          <span class="kicker" id="resume-kicker">ابدأ التلاوة</span>
+          <span class="continue-name" id="resume-name">الفاتحة</span>
+          <span class="continue-meta" id="resume-meta"></span>
+        </button>
+
+        <input id="query" type="search" class="search" placeholder="ابحث باسم السورة أو رقمها" autocomplete="off">
+
+        <button type="button" class="voice" id="open-reciter">
+          <span class="voice-label">القارئ</span>
+          <span class="voice-name" id="reciter-name">مشاري راشد العفاسي</span>
+          <span class="voice-style" id="reciter-style">اضغط للتغيير</span>
+        </button>
+        <select id="reciter" class="visually-hidden" tabindex="-1" aria-hidden="true"></select>
+
+        <button type="button" class="juz" id="open-download">
+          <span class="juz-title">التنزيل</span>
+          <span class="juz-sub" id="download-sub">٠ من ١١٤ سورة</span>
+        </button>
+
+        <h2 class="section">السور كما في المصحف</h2>
+        <div class="list" id="list"></div>
+      </section>
+
+      <section id="reader" hidden>
+        <div class="reader-head">
+          <button type="button" class="header-btn" id="back">رجوع</button>
+          <div class="reader-titles">
+            <h2 id="reader-name"></h2>
+            <p class="reader-meta" id="reader-meta"></p>
+          </div>
+          <div class="reader-tools">
+            <button type="button" class="header-btn" id="smaller" aria-label="تصغير الخط">أ-</button>
+            <button type="button" class="header-btn" id="larger" aria-label="تكبير الخط">أ+</button>
+            <button type="button" class="header-btn" id="save-one">تنزيل</button>
+          </div>
         </div>
-      </div>
-      <article class="page" id="page"></article>
-    </section>
+        <article class="page" id="page"></article>
+      </section>
+    </div>
 
     <section class="player" id="player" hidden>
-      <div class="player-top">
-        <div>
-          <p class="player-kicker" id="player-reciter"></p>
-          <h2 id="player-title">سورة</h2>
-        </div>
-        <button type="button" class="text-btn" id="repeat" aria-pressed="false">تكرار السورة</button>
+      <div class="player-controls">
+        <button type="button" class="side-btn" id="next">التالية</button>
+        <button type="button" class="play" id="play" aria-label="تشغيل">▶</button>
+        <button type="button" class="side-btn" id="prev">السابقة</button>
       </div>
+      <button type="button" class="player-info" id="player-info">
+        <span class="player-title" id="player-title">سورة</span>
+        <span class="player-kicker" id="player-reciter"></span>
+      </button>
       <input id="seek" type="range" min="0" max="1000" value="0" aria-label="موضع التلاوة">
       <div class="player-time">
-        <span id="time-now">٠:٠٠</span>
         <span id="time-all">٠:٠٠</span>
-      </div>
-      <div class="player-controls">
-        <button type="button" id="prev">السابقة</button>
-        <button type="button" class="play" id="play">تشغيل</button>
-        <button type="button" id="next">التالية</button>
+        <button type="button" class="text-btn repeat" id="repeat" aria-pressed="false">تكرار</button>
+        <span id="time-now">٠:٠٠</span>
       </div>
       <div class="speeds" id="speeds">
         <button type="button" data-speed="0.85">أبطأ</button>
@@ -97,6 +109,14 @@
         <button type="button" data-speed="1.15">أسرع</button>
       </div>
     </section>
+  </div>
+
+  <div class="overlay" id="reciter-sheet" hidden>
+    <div class="sheet night-sheet" role="dialog" aria-modal="true" aria-labelledby="reciter-sheet-title">
+      <h2 id="reciter-sheet-title">اختر القارئ</h2>
+      <div class="reciter-list" id="reciter-list"></div>
+      <button type="button" class="ghost" id="reciter-close">إغلاق</button>
+    </div>
   </div>
 
   <div class="overlay" id="fatiha" hidden>
@@ -115,7 +135,7 @@
 
   <div class="overlay" id="download" hidden>
     <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="download-title">
-      <h2 id="download-title">تنزيل بدون نت</h2>
+      <h2 id="download-title">التنزيل</h2>
       <p class="hint" id="download-hint"></p>
       <div class="actions" id="download-actions">
         <button type="button" class="gold" id="dl-amma">تنزيل جزء عمّ</button>

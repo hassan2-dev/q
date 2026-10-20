@@ -1,4 +1,10 @@
 @font-face {
+  font-family: "AmiriQuran";
+  src: url("../fonts/AmiriQuran-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
   font-family: "Amiri";
   src: url("../fonts/Amiri-Regular.ttf") format("truetype");
   font-weight: 400;
@@ -30,400 +36,776 @@
 }
 @font-face {
   font-family: "Tajawal";
-  src: url("../fonts/Tajawal-Medium.ttf") format("truetype");
-  font-weight: 500;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Tajawal";
   src: url("../fonts/Tajawal-Bold.ttf") format("truetype");
   font-weight: 700;
   font-display: swap;
 }
 
 :root {
-  --night: #07140f;
-  --deep: #10281f;
-  --card: #143027;
-  --gold: #d4b072;
-  --gold-2: #f4e4c4;
-  --ink: #24180f;
-  --paper: #fbf6ec;
-  --muted: #c5d5cc;
-  --line: rgba(212, 176, 114, 0.34);
+  --ink: #071410;
+  --ink-soft: #0c1c17;
+  --emerald: #123027;
+  --emerald-deep: #0e241d;
+  --gold: #c6a15b;
+  --gold-soft: #f0e2c4;
+  --gold-dim: #8c6a38;
+  --line: rgba(198, 161, 91, 0.45);
+  --mist: rgba(240, 226, 196, 0.78);
+  --parchment: #f6f1e6;
+  --parchment-deep: #e7dcc6;
+  --text: #1c1712;
+  --text-soft: #5e564c;
+  --night-soft: #cbb992;
+  --danger: #e7c3b0;
+  --dock: #081611;
   --scale: 1.15;
+  --phone: 430px;
   color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
 
-html, body { margin: 0; min-height: 100%; }
+html, body {
+  margin: 0;
+  min-height: 100%;
+}
 
 body {
   font-family: "Tajawal", "Segoe UI", Tahoma, sans-serif;
-  color: var(--gold-2);
-  background:
-    radial-gradient(ellipse at 50% -8%, rgba(212, 176, 114, 0.16), transparent 42%),
-    var(--night);
-  line-height: 1.6;
+  color: var(--gold-soft);
+  background: var(--ink);
+  line-height: 1.55;
 }
 
+body.day {
+  color: var(--text);
+  background: var(--parchment);
+  color-scheme: light;
+}
+
+body.day .sky { display: none; }
+
 button, input, select { font: inherit; color: inherit; }
-button { cursor: pointer; }
+button {
+  cursor: pointer;
+  border: 0;
+  background: none;
+}
 button:disabled { opacity: 0.45; cursor: default; }
 
-.mihrab {
+.sky {
   position: fixed;
   inset: 0;
-  width: min(920px, 100%);
-  height: 100%;
-  margin: 0 auto;
-  left: 0;
-  right: 0;
-  color: rgba(212, 176, 114, 0.2);
   pointer-events: none;
   z-index: 0;
+  color: var(--gold);
+}
+.sky-star {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  opacity: 0.28;
+}
+.sky-star.s1 { top: 28px; left: 22px; }
+.sky-star.s2 { top: 90px; right: 28px; width: 16px; height: 16px; opacity: 0.2; }
+.sky-star.s3 { bottom: 160px; left: 18px; width: 18px; height: 18px; opacity: 0.16; }
+
+.phone {
+  position: relative;
+  z-index: 1;
+  width: min(var(--phone), 100%);
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  background: transparent;
 }
 
 .app {
-  position: relative;
-  z-index: 1;
-  width: min(1080px, calc(100% - 28px));
-  margin: 0 auto;
-  padding: 22px 0 40px;
+  padding: 12px 16px 24px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
 }
 
-.top {
+body.has-player .app {
+  padding-bottom: calc(188px + env(safe-area-inset-bottom, 0px));
+}
+
+/* —— Home brand —— */
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 8px;
+}
+.mark {
+  width: 30px;
+  height: 30px;
+  color: var(--gold);
+}
+.bismillah-home {
+  margin: 8px 0 0;
+  font-family: "AmiriQuran", "Amiri", serif;
+  font-size: 1.25rem;
+  line-height: 1.9;
+  color: var(--gold-soft);
+}
+body.day .bismillah-home { color: var(--text); }
+
+.brand h1 {
+  margin: 2px 0 0;
+  font-family: "Aref Ruqaa", serif;
+  font-size: 2.75rem;
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--gold);
+}
+body.day .brand h1 { color: var(--gold-dim); }
+
+.subtitle {
+  margin: 2px 0 0;
+  font-size: 1rem;
+  color: var(--mist);
+}
+body.day .subtitle { color: var(--text-soft); }
+
+.mode-btn {
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 8px 18px;
+  font-family: "Tajawal", sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--gold-soft);
+}
+body.day .mode-btn {
+  border-color: var(--gold-dim);
+  background: var(--parchment-deep);
+  color: var(--text);
+}
+
+.gold-rule {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding-bottom: 16px;
-}
-
-.brand { display: flex; align-items: center; gap: 14px; }
-.brand h1 {
-  margin: 0;
-  font-family: "Aref Ruqaa", "Amiri", serif;
-  font-size: clamp(2rem, 4vw, 3.1rem);
-  font-weight: 700;
-  line-height: 1.15;
-  color: var(--gold-2);
-}
-.eyebrow {
-  margin: 0;
+  gap: 10px;
+  margin: 10px 0 8px;
   color: var(--gold);
-  letter-spacing: 0.08em;
-  font-size: 0.95rem;
 }
-
-.mark {
-  width: 62px;
-  height: 62px;
+.gold-rule span {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.gold-rule svg {
+  width: 14px;
+  height: 14px;
   flex: none;
 }
 
-.net {
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 8px 14px;
-  color: #d9eccf;
-  background: rgba(18, 48, 36, 0.8);
+/* —— Dedication —— */
+.dedication {
+  margin: 4px 0 10px;
+  border-radius: 20px;
+  border: 1px solid var(--gold);
+  background: rgba(18, 48, 39, 0.72);
+  padding: 16px 18px;
+  text-align: center;
 }
-.net.off { color: #f0d0a2; }
+body.day .dedication {
+  background: var(--parchment-deep);
+  border-color: var(--gold-dim);
+}
+.dedication-label {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+}
+.dedication-to {
+  margin: 4px 0 0;
+  font-family: "Aref Ruqaa", serif;
+  font-size: 1.7rem;
+  color: var(--gold-soft);
+}
+body.day .dedication-to { color: var(--text); }
+.dedication-body {
+  margin: 6px 0 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--night-soft);
+}
+body.day .dedication-body { color: var(--text-soft); }
 
-.rule {
-  height: 1px;
-  border: 0;
-  margin: 0 0 18px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+.banner {
+  margin: 0 0 8px;
+  padding: 12px;
+  border-radius: 14px;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--gold-soft);
+  background: rgba(198, 161, 91, 0.12);
+}
+.notice {
+  margin: 0 0 8px;
+  text-align: center;
+  color: var(--danger);
+  font-size: 0.95rem;
 }
 
-.note {
-  margin: 0 0 16px;
-  padding: 12px 16px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: rgba(16, 40, 31, 0.72);
-  color: var(--muted);
-}
-
-.toolbar {
-  display: grid;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.reciter, .search {
-  display: grid;
-  gap: 6px;
-  font-size: 1.02rem;
-}
-
-select, .search input {
-  width: 100%;
-  min-height: 58px;
-  border-radius: 16px;
-  border: 1px solid var(--line);
-  background: #0d241c;
-  padding: 0 16px;
-  outline: none;
-}
-select:focus, .search input:focus, button:focus-visible {
-  box-shadow: 0 0 0 3px rgba(212, 176, 114, 0.35);
-}
-
-.filters, .home-actions, .speeds, .reader-tools, .prayer-actions, .player-controls {
+/* —— Continue card —— */
+.continue {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 8px;
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid var(--gold);
+  background: var(--emerald);
+  text-align: center;
+}
+body.day .continue { background: var(--parchment-deep); }
+.kicker {
+  font-size: 0.95rem;
+  color: var(--night-soft);
+}
+body.day .kicker { color: var(--text-soft); }
+.continue-name {
+  margin-top: 2px;
+  font-family: "Aref Ruqaa", serif;
+  font-size: 2.2rem;
+  color: var(--gold-soft);
+}
+body.day .continue-name { color: var(--text); }
+.continue-meta {
+  margin-top: 2px;
+  font-size: 0.95rem;
+  color: var(--gold);
+}
+
+.search {
+  width: 100%;
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px 16px;
+  background: rgba(18, 48, 39, 0.55);
+  color: var(--gold-soft);
+  outline: none;
+  text-align: right;
+}
+body.day .search {
+  background: #fffdf8;
+  border-color: var(--gold-dim);
+  color: var(--text);
+}
+.search::placeholder { color: var(--gold-dim); }
+body.day .search::placeholder { color: var(--text-soft); }
+.search:focus-visible,
+button:focus-visible {
+  box-shadow: 0 0 0 3px rgba(198, 161, 91, 0.35);
+}
+
+.voice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 12px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  text-align: center;
+}
+body.day .voice { background: #fffdf8; }
+.voice-label {
+  font-size: 0.82rem;
+  color: var(--gold-dim);
+}
+.voice-name {
+  margin-top: 2px;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--gold-soft);
+}
+body.day .voice-name { color: var(--text); }
+.voice-style {
+  margin-top: 2px;
+  font-size: 0.9rem;
+  color: var(--night-soft);
+}
+body.day .voice-style { color: var(--text-soft); }
+
+.juz {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 10px;
+  min-height: 64px;
+  padding: 12px;
+  border-radius: 18px;
+  background: var(--gold);
+  color: var(--ink);
+  text-align: center;
+}
+.juz-title {
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+.juz-sub {
+  margin-top: 2px;
+  font-size: 0.85rem;
+  color: #3d3018;
+}
+
+.section {
+  margin: 18px 0 8px;
+  font-family: "Aref Ruqaa", serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  text-align: right;
+  color: var(--gold-soft);
+}
+body.day .section { color: var(--text); }
+
+/* —— Surah list —— */
+.list {
+  display: flex;
+  flex-direction: column;
   gap: 8px;
 }
 
-.chip, .text-btn, .ghost, .gold, .play, .save-btn {
-  min-height: 52px;
-  border-radius: 14px;
-  border: 1px solid var(--line);
-  background: transparent;
-  padding: 0 16px;
-}
-.chip.on, .text-btn.on, .speeds button.on {
-  background: var(--gold);
-  color: #1b140c;
-  border-color: var(--gold);
-}
-.gold, .play {
-  background: var(--gold);
-  color: #1b140c;
-  border-color: var(--gold);
-  font-weight: 700;
-}
-.play { min-width: 148px; font-size: 1.25rem; }
-
-.resume { justify-self: start; }
-
-.list {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-}
-@media (min-width: 860px) {
-  .list { grid-template-columns: 1fr 1fr; }
-}
-
-.card {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 12px;
+.row {
+  display: flex;
+  flex-direction: row-reverse;
   align-items: center;
+  gap: 12px;
   width: 100%;
-  text-align: right;
-  background: linear-gradient(180deg, rgba(22, 54, 44, 0.95), rgba(14, 38, 31, 0.95));
-  border: 1px solid var(--line);
+  min-height: 74px;
+  padding: 12px 10px;
   border-radius: 18px;
-  padding: 12px;
-}
-.card-open {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 12px;
-  align-items: center;
-  min-height: 64px;
-  padding: 0;
-  border: 0;
-  background: transparent;
+  border: 1px solid transparent;
+  background: rgba(18, 48, 39, 0.72);
   text-align: right;
-  cursor: pointer;
 }
-.card:hover { border-color: rgba(243, 226, 196, 0.7); }
+body.day .row { background: #fffdf8; }
+.row.on { border-color: var(--gold); }
+.row:hover { border-color: var(--line); }
 
-.seal {
-  width: 58px;
-  height: 58px;
+.num {
+  width: 48px;
+  height: 48px;
+  flex: none;
   display: grid;
   place-items: center;
   border-radius: 50%;
   border: 1px solid var(--gold);
-  box-shadow: inset 0 0 0 5px rgba(212, 176, 114, 0.14);
-  color: var(--gold-2);
-  font-family: "Amiri", serif;
-  font-size: 1.25rem;
-}
-.card h2 {
-  margin: 0;
-  font-family: "Amiri", serif;
-  font-size: 1.55rem;
+  color: var(--gold);
   font-weight: 700;
-  line-height: 1.35;
+  font-size: 1rem;
 }
-.meta { margin: 2px 0 0; color: var(--muted); font-size: 0.95rem; }
-.save-btn { min-width: 92px; padding: 0 10px; }
-.save-btn.saved {
-  color: #d9eccf;
-  border-color: rgba(217, 236, 207, 0.45);
+.meta { flex: 1; align-items: flex-end; display: flex; flex-direction: column; }
+.meta .name {
+  font-family: "Aref Ruqaa", serif;
+  font-size: 1.6rem;
+  color: var(--gold-soft);
+  line-height: 1.2;
 }
+body.day .meta .name { color: var(--text); }
+.meta .meta-text {
+  margin-top: 2px;
+  font-size: 0.9rem;
+  color: var(--night-soft);
+}
+body.day .meta .meta-text { color: var(--text-soft); }
+.kept {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
 .empty {
-  grid-column: 1 / -1;
   text-align: center;
   padding: 28px 10px;
-  color: var(--muted);
+  color: var(--mist);
+  font-size: 1rem;
 }
+body.day .empty { color: var(--text-soft); }
 
-.foot {
-  margin-top: 22px;
-  color: var(--muted);
-  font-size: 0.92rem;
-}
-.foot a { color: var(--gold-2); }
-
+/* —— Reader —— */
 .reader-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 14px;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-top: 4px;
 }
-.reader-head h2 {
+.reader-titles {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+.reader-titles h2 {
   margin: 0;
   font-family: "Aref Ruqaa", serif;
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-size: 1.7rem;
+  font-weight: 400;
   line-height: 1.2;
+  color: var(--gold-soft);
 }
-.reader-tools button { min-width: 64px; font-size: 1.15rem; }
+body.day .reader-titles h2 { color: var(--text); }
+.reader-meta {
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+  color: var(--night-soft);
+}
+body.day .reader-meta { color: var(--text-soft); }
+
+.header-btn {
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  color: var(--gold-soft);
+  font-weight: 700;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+body.day .header-btn {
+  color: var(--text);
+  border-color: var(--gold-dim);
+  background: var(--parchment-deep);
+}
+.reader-tools {
+  display: flex;
+  gap: 4px;
+}
+.reader-tools .header-btn {
+  min-width: 44px;
+  padding: 8px 10px;
+}
+.header-btn.saved {
+  color: var(--gold);
+  border-color: var(--gold);
+}
 
 .page {
-  background: var(--paper);
-  color: var(--ink);
-  border-radius: 22px;
-  padding: 28px 22px 12px;
-  box-shadow:
-    0 24px 70px rgba(0, 0, 0, 0.35),
-    inset 0 0 0 1px #e7d7b4,
-    inset 0 0 0 11px var(--paper),
-    inset 0 0 0 12px rgba(184, 146, 74, 0.55);
+  background: transparent;
+  color: var(--gold-soft);
+  border-radius: 0;
+  padding: 8px 0 12px;
+  box-shadow: none;
 }
+body.day .page { color: var(--text); }
+
 .bismillah {
-  margin: 8px 0 6px;
+  margin: 8px 0 14px;
   text-align: center;
-  font-family: "Amiri", "Traditional Arabic", serif;
-  font-size: calc(2rem * var(--scale));
+  font-family: "AmiriQuran", "Amiri", serif;
+  font-size: calc(1.55rem * var(--scale));
   line-height: 2;
-  color: #6e5424;
+  color: var(--gold);
 }
+body.day .bismillah { color: var(--gold-dim); }
+
 .ayah {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 14px;
+  gap: 12px;
   margin: 0;
-  padding: 13px 6px;
-  border-bottom: 1px solid rgba(138, 103, 48, 0.16);
-  font-family: "Amiri", "Traditional Arabic", serif;
-  font-size: calc(1.9rem * var(--scale));
-  line-height: 2.05;
+  padding: 12px 4px;
+  border-bottom: 1px solid rgba(198, 161, 91, 0.18);
+  font-family: "AmiriQuran", "Amiri", serif;
+  font-size: calc(1.55rem * var(--scale));
+  line-height: 2.1;
 }
-.ayah-text { flex: 1; }
+.ayah-text { flex: 1; text-align: right; }
 .ayah-no {
   flex: none;
-  min-width: 2.15rem;
-  height: 2.15rem;
-  margin-top: 0.55rem;
+  min-width: 2rem;
+  height: 2rem;
+  margin-top: 0.45rem;
   display: grid;
   place-items: center;
-  border: 1px solid #b8924a;
+  border: 1px solid var(--gold);
   border-radius: 50%;
-  color: #8a6730;
-  font-size: 0.95rem;
+  color: var(--gold);
+  font-family: "Tajawal", sans-serif;
+  font-size: 0.85rem;
   line-height: 1;
 }
 
+/* —— Player dock —— */
 .player {
-  position: sticky;
-  bottom: 12px;
-  z-index: 5;
-  margin-top: 16px;
-  padding: 14px;
-  border-radius: 22px;
-  border: 1px solid var(--line);
-  background: rgba(8, 22, 17, 0.94);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  z-index: 8;
+  width: min(var(--phone), 100%);
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--line);
+  background: var(--dock);
+  box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.35);
 }
-.player-top {
+body.day .player {
+  background: #fffdf8;
+  box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.08);
+}
+
+.player-controls {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+.side-btn {
+  flex: 1;
+  min-height: 40px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--gold-soft);
+}
+body.day .side-btn { color: var(--text); }
+
+.play {
+  width: 64px;
+  height: 64px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  background: var(--emerald);
+  color: var(--gold-soft);
+  font-size: 1.35rem;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 0 4px rgba(198, 161, 91, 0.12);
+}
+body.day .play {
+  background: var(--parchment-deep);
+  color: var(--text);
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  width: 100%;
+  margin-top: 6px;
+  padding: 0;
+  text-align: center;
 }
-.player h2 {
-  margin: 0;
-  font-family: "Amiri", serif;
+.player-title {
+  font-family: "Aref Ruqaa", serif;
   font-size: 1.45rem;
+  color: var(--gold-soft);
+  line-height: 1.2;
 }
-.player-kicker { margin: 0; color: var(--gold); }
+body.day .player-title { color: var(--text); }
+.player-kicker {
+  margin-top: 2px;
+  font-size: 0.88rem;
+  color: var(--night-soft);
+}
+body.day .player-kicker { color: var(--text-soft); }
+
 #seek {
   width: 100%;
   margin: 10px 0 4px;
   accent-color: var(--gold);
+  height: 4px;
 }
 .player-time {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  color: var(--muted);
+  gap: 8px;
+  color: var(--night-soft);
   font-variant-numeric: tabular-nums;
+  font-size: 0.88rem;
+}
+body.day .player-time { color: var(--text-soft); }
+
+.repeat {
+  min-height: auto;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  color: var(--gold-soft);
+  font-size: 0.88rem;
+}
+body.day .repeat { color: var(--text); }
+.repeat.on {
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
+.speeds {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+.speeds button {
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  font-size: 0.85rem;
+  color: var(--gold-soft);
+}
+body.day .speeds button { color: var(--text); }
+.speeds button.on {
+  background: var(--gold);
+  color: var(--ink);
+  border-color: var(--gold);
+}
+
+/* —— Overlays —— */
 .overlay {
   position: fixed;
   inset: 0;
   z-index: 20;
   display: flex;
   justify-content: center;
+  align-items: flex-end;
   overflow: auto;
-  padding: 22px 18px;
-  background: rgba(4, 12, 9, 0.74);
+  padding: 0;
+  background: rgba(4, 12, 9, 0.72);
 }
+.overlay#fatiha {
+  align-items: center;
+  padding: 22px 18px;
+}
+
 .prayer, .sheet {
-  width: min(560px, 100%);
-  margin: auto;
-  background: var(--paper);
-  color: var(--ink);
+  width: min(var(--phone), 100%);
+  margin: 0 auto;
+  background: var(--parchment);
+  color: var(--text);
+  border-radius: 24px 24px 0 0;
+  padding: 22px 18px calc(18px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.35);
+  text-align: center;
+}
+.overlay#fatiha .prayer {
   border-radius: 24px;
-  padding: 26px 22px 20px;
+  margin: auto;
   box-shadow:
     0 30px 80px rgba(0, 0, 0, 0.45),
     inset 0 0 0 1px #e7d7b4,
-    inset 0 0 0 10px var(--paper),
-    inset 0 0 0 11px rgba(184, 146, 74, 0.6);
-  text-align: center;
+    inset 0 0 0 10px var(--parchment),
+    inset 0 0 0 11px rgba(184, 146, 74, 0.55);
 }
-.sadaq, .to { margin: 0; color: #6e5424; }
+
+.night-sheet {
+  background: var(--ink-soft);
+  color: var(--gold-soft);
+  text-align: right;
+  max-height: min(78vh, 640px);
+  overflow: auto;
+}
+.night-sheet h2 {
+  margin: 0 0 12px;
+  font-family: "Aref Ruqaa", serif;
+  font-size: 1.8rem;
+  text-align: center;
+  color: var(--gold);
+}
+.reciter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.reciter-option {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  text-align: right;
+  color: var(--gold-soft);
+  background: rgba(18, 48, 39, 0.55);
+}
+.reciter-option.on {
+  border-color: var(--gold);
+  background: var(--emerald);
+}
+.reciter-option .opt-name {
+  display: block;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.night-sheet .ghost {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  color: var(--gold-soft);
+}
+
+.sadaq { margin: 0; color: #6e5424; }
 .prayer h2, .sheet h2 {
   margin: 6px 0;
   font-family: "Aref Ruqaa", serif;
-  font-size: 2.3rem;
+  font-size: 2.1rem;
   line-height: 1.2;
 }
 .names {
   margin: 0 0 8px;
   font-family: "Aref Ruqaa", serif;
-  font-size: 1.7rem;
+  font-size: 1.55rem;
   color: #6e5424;
 }
 .ornament { margin: 4px 0; color: #b8924a; letter-spacing: 0.4em; }
 .prayer-verses {
   text-align: center;
-  font-family: "Amiri", serif;
-  font-size: 1.45rem;
+  font-family: "AmiriQuran", "Amiri", serif;
+  font-size: 1.35rem;
   line-height: 1.9;
 }
 .prayer-verses p { margin: 0 0 8px; }
-.prayer-actions, .sheet .actions { margin-top: 16px; justify-content: center; }
-.prayer .gold, .sheet .gold { min-width: 140px; font-size: 1.25rem; }
+.prayer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  justify-content: center;
+}
+.prayer .gold, .sheet .gold, .ghost, .sheet .actions button, #download-cancel {
+  min-height: 52px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  padding: 0 16px;
+}
+.gold {
+  background: var(--gold);
+  color: var(--ink);
+  border-color: var(--gold);
+  font-weight: 700;
+}
+.prayer .gold { min-width: 140px; font-size: 1.2rem; }
 .sheet { text-align: right; }
 .sheet h2, .hint { text-align: center; }
-.hint { color: #5c4a32; }
+.hint { color: #5c4a32; margin: 0 0 12px; }
 .sheet .actions { display: grid; gap: 8px; }
-.sheet .actions button, #download-cancel { width: 100%; min-height: 56px; }
+.sheet .actions button, #download-cancel { width: 100%; }
 .bar {
   height: 10px;
   border-radius: 999px;
@@ -444,15 +826,15 @@ select:focus, .search input:focus, button:focus-visible {
   left: 50%;
   bottom: 24px;
   transform: translateX(-50%);
-  width: min(520px, calc(100% - 28px));
+  width: min(var(--phone), calc(100% - 28px));
   padding: 14px 16px;
   text-align: center;
   background: #24180f;
-  color: var(--paper);
+  color: var(--parchment);
   border: 1px solid var(--gold);
   border-radius: 14px;
 }
-body.has-player .toast { bottom: 168px; }
+body.has-player .toast { bottom: 188px; }
 
 .file-wall {
   position: fixed;
@@ -461,15 +843,14 @@ body.has-player .toast { bottom: 168px; }
   display: grid;
   place-items: center;
   padding: 24px;
-  background: var(--night);
+  background: var(--ink);
   text-align: center;
+  color: var(--gold-soft);
 }
-.file-wall h1 { font-family: "Aref Ruqaa", serif; font-size: 2.4rem; }
-
-@media (max-width: 720px) {
-  .reader-head { align-items: flex-start; flex-direction: column; }
-  .ayah { font-size: calc(1.65rem * var(--scale)); }
-  .top { align-items: flex-start; }
+.file-wall h1 {
+  font-family: "Aref Ruqaa", serif;
+  font-size: 2.4rem;
+  color: var(--gold);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,24 +1,24 @@
 const RECITERS = [
-  { id: "ar.alafasy", name: "مشاري راشد العفاسي" },
-  { id: "ar.abdulbasitmurattal", name: "عبد الباسط عبد الصمد" },
-  { id: "ar.abdulbasitmujawwad", name: "عبد الباسط عبد الصمد · مجوّد" },
-  { id: "ar.muhammadsiddiqalminshawimujawwad", name: "محمد صديق المنشاوي" },
-  { id: "ar.saudalshuraim", name: "سعود الشريم" },
-  { id: "ar.aliabdurrahmanalhuthaify", name: "علي الحذيفي" },
-  { id: "ar.muhammadayyub", name: "محمد أيوب" },
-  { id: "ar.ahmedalajmi", name: "أحمد العجمي" },
-  { id: "ar.yasseraldossari", name: "ياسر الدوسري" },
-  { id: "ar.bandarbalila", name: "بندر بليلة" },
-  { id: "ar.mahmoudalialbanna", name: "محمود علي البنا" },
-  { id: "ar.mohamedtablawi", name: "محمد الطبلاوي" },
-  { id: "ar.abdulbariaththubaity", name: "عبد الباري الثبيتي" },
-  { id: "ar.salahalbudair", name: "صلاح البدير" },
-  { id: "ar.nasseralqatami", name: "ناصر القطامي" },
-  { id: "ar.faresabbad", name: "فارس عباد" },
-  { id: "ar.haniarrifai", name: "هاني الرفاعي" },
-  { id: "ar.aymanswed", name: "أيمن سويد" },
-  { id: "ar.ibrahimalakhdar", name: "إبراهيم الأخضر" },
-  { id: "ar.khaledalqahtani", name: "خالد القحطاني" }
+  { id: "ar.alafasy", name: "مشاري راشد العفاسي", style: "مرتل" },
+  { id: "ar.abdulbasitmurattal", name: "عبد الباسط عبد الصمد", style: "مرتل" },
+  { id: "ar.abdulbasitmujawwad", name: "عبد الباسط عبد الصمد", style: "مجوّد" },
+  { id: "ar.muhammadsiddiqalminshawimujawwad", name: "محمد صديق المنشاوي", style: "مجوّد" },
+  { id: "ar.saudalshuraim", name: "سعود الشريم", style: "مرتل" },
+  { id: "ar.aliabdurrahmanalhuthaify", name: "علي الحذيفي", style: "مرتل" },
+  { id: "ar.muhammadayyub", name: "محمد أيوب", style: "مرتل" },
+  { id: "ar.ahmedalajmi", name: "أحمد العجمي", style: "مرتل" },
+  { id: "ar.yasseraldossari", name: "ياسر الدوسري", style: "مرتل" },
+  { id: "ar.bandarbalila", name: "بندر بليلة", style: "مرتل" },
+  { id: "ar.mahmoudalialbanna", name: "محمود علي البنا", style: "مرتل" },
+  { id: "ar.mohamedtablawi", name: "محمد الطبلاوي", style: "مرتل" },
+  { id: "ar.abdulbariaththubaity", name: "عبد الباري الثبيتي", style: "مرتل" },
+  { id: "ar.salahalbudair", name: "صلاح البدير", style: "مرتل" },
+  { id: "ar.nasseralqatami", name: "ناصر القطامي", style: "مرتل" },
+  { id: "ar.faresabbad", name: "فارس عباد", style: "مرتل" },
+  { id: "ar.haniarrifai", name: "هاني الرفاعي", style: "مرتل" },
+  { id: "ar.aymanswed", name: "أيمن سويد", style: "مرتل" },
+  { id: "ar.ibrahimalakhdar", name: "إبراهيم الأخضر", style: "مرتل" },
+  { id: "ar.khaledalqahtani", name: "خالد القحطاني", style: "مرتل" }
 ];
 
 const $ = (id) => document.getElementById(id);
@@ -28,9 +28,9 @@ const state = {
   quran: [],
   surah: 1,
   reciter: localStorage.getItem("mushaf-reciter") || "ar.alafasy",
-  filter: "all",
   scale: Number(localStorage.getItem("mushaf-scale") || 1.15),
   speed: Number(localStorage.getItem("mushaf-speed") || 1),
+  night: localStorage.getItem("mushaf-night") !== "0",
   repeat: false,
   saved: new Set(),
   resumeTime: 0,
@@ -42,6 +42,10 @@ const state = {
 
 function ar(value) {
   return String(value).replace(/\d/g, (digit) => "٠١٢٣٤٥٦٧٨٩"[digit]);
+}
+
+function westernDigits(value) {
+  return String(value).replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)));
 }
 
 function esc(value) {
@@ -67,8 +71,12 @@ function norm(value) {
     .toLowerCase();
 }
 
+function reciterOf(id) {
+  return RECITERS.find((item) => item.id === id) || RECITERS[0];
+}
+
 function reciterName(id) {
-  return RECITERS.find((item) => item.id === id)?.name || "";
+  return reciterOf(id).name;
 }
 
 function audioUrl(reciter, number) {
@@ -119,6 +127,14 @@ function applyScale() {
   document.documentElement.style.setProperty("--scale", String(state.scale));
 }
 
+function applyMode() {
+  document.body.classList.toggle("day", !state.night);
+  $("toggle-mode").textContent = state.night ? "نهاري" : "ليلي";
+  const theme = document.getElementById("theme-color");
+  if (theme) theme.setAttribute("content", state.night ? "#071410" : "#f6f1e6");
+  localStorage.setItem("mushaf-night", state.night ? "1" : "0");
+}
+
 function setSource(url) {
   audio.pause();
   if (state.blobUrl) {
@@ -139,42 +155,62 @@ function savedCount() {
 }
 
 function visibleSurahs() {
-  const query = norm($("query").value.trim());
+  const raw = $("query").value.trim();
+  const digits = westernDigits(raw);
+  const query = norm(raw);
   return state.quran.filter((surah) => {
-    if (state.filter === "amma" && surah.n < 78) return false;
-    if (state.filter === "meccan" && surah.type !== "Meccan") return false;
-    if (state.filter === "medinan" && surah.type !== "Medinan") return false;
-    if (!query) return true;
+    if (!raw) return true;
+    if (/^\d+$/.test(digits) && surah.n === Number(digits)) return true;
     return norm(surah.name).includes(query) || surah.en.toLowerCase().includes(query);
   });
+}
+
+function updateReciterCard() {
+  const item = reciterOf(state.reciter);
+  $("reciter-name").textContent = item.name;
+  const count = savedCount();
+  $("reciter-style").textContent = count >= 114
+    ? "هذا الصوت محفوظ كاملًا"
+    : `${item.style} · اضغط للتغيير`;
+  $("download-sub").textContent = count >= 114
+    ? "صوت هذا القارئ محفوظ كاملًا"
+    : `${ar(count)} من ${ar(114)} سورة`;
+  $("reciter").value = state.reciter;
 }
 
 function renderReciters() {
   $("reciter").innerHTML = RECITERS.map((item) =>
     `<option value="${item.id}"${item.id === state.reciter ? " selected" : ""}>${esc(item.name)}</option>`
   ).join("");
+  $("reciter-list").innerHTML = RECITERS.map((item) => `
+    <button type="button" class="reciter-option${item.id === state.reciter ? " on" : ""}" data-reciter="${item.id}">
+      <span class="opt-name">${esc(item.name)}</span>
+      <span class="voice-style">${esc(item.style)}</span>
+    </button>
+  `).join("");
+  updateReciterCard();
 }
 
 function renderList() {
   const items = visibleSurahs();
+  const progress = loadProgress();
+  const current = progress?.surah || 0;
   if (!items.length) {
-    $("list").innerHTML = `<p class="empty">ما لقينا سورة بهذا الاسم.</p>`;
+    $("list").innerHTML = `<p class="empty">لا توجد سورة بهذا الاسم</p>`;
     return;
   }
   $("list").innerHTML = items.map((surah) => {
     const saved = state.saved.has(keyOf(state.reciter, surah.n));
     const kind = surah.type === "Meccan" ? "مكية" : "مدنية";
+    const on = surah.n === current ? " on" : "";
     return `
-      <article class="card">
-        <button type="button" class="card-open" data-surah="${surah.n}">
-          <span class="seal">${ar(surah.n)}</span>
-          <span>
-            <h2>${esc(surah.name)}</h2>
-            <p class="meta">${kind} · ${ar(surah.ayahs.length)} ${surah.ayahs.length === 1 ? "آية" : "آيات"}</p>
-          </span>
-        </button>
-        <button type="button" class="save-btn${saved ? " saved" : ""}" data-save="${surah.n}">${saved ? "محفوظة" : "تنزيل"}</button>
-      </article>`;
+      <button type="button" class="row${on}" data-surah="${surah.n}">
+        <span class="num">${ar(surah.n)}</span>
+        <span class="meta">
+          <span class="name">${esc(surah.name)}</span>
+          <span class="meta-text">${kind} · ${ar(surah.ayahs.length)} آيات${saved ? " · محفوظة" : ""}</span>
+        </span>
+      </button>`;
   }).join("");
 }
 
@@ -183,7 +219,8 @@ function renderPage(number) {
   $("reader-name").textContent = surah.name;
   $("reader-meta").textContent = `${surah.type === "Meccan" ? "مكية" : "مدنية"} · ${ar(surah.ayahs.length)} آيات`;
   $("player-title").textContent = surah.name;
-  $("player-reciter").textContent = reciterName(state.reciter);
+  const item = reciterOf(state.reciter);
+  $("player-reciter").textContent = `${item.name} · ${item.style}`;
   const bism = number !== 1 && number !== 9
     ? `<p class="bismillah">${esc(state.quran[0].ayahs[0])}</p>`
     : "";
@@ -209,24 +246,19 @@ function updateSaveButton() {
 
 function updateResume() {
   const progress = loadProgress();
-  const button = $("resume");
-  if (!progress || !state.quran.length) {
-    button.hidden = true;
-    return;
-  }
-  const surah = state.quran[progress.surah - 1];
-  if (!surah) {
-    button.hidden = true;
-    return;
-  }
-  button.hidden = false;
-  button.textContent = `كمّل: ${surah.name}`;
+  const fallback = state.quran[0];
+  const surah = progress && state.quran[progress.surah - 1]
+    ? state.quran[progress.surah - 1]
+    : fallback;
+  if (!surah) return;
+  $("resume-kicker").textContent = progress ? "تابع من حيث وقفت" : "ابدأ التلاوة";
+  $("resume-name").textContent = surah.name;
+  $("resume-meta").textContent = `${surah.type === "Meccan" ? "مكية" : "مدنية"} · ${ar(surah.ayahs.length)} آيات`;
 }
 
 function updateNet() {
   const online = navigator.onLine;
-  $("net").textContent = online ? "متصل" : "بدون نت";
-  $("net").classList.toggle("off", !online);
+  $("offline-banner").hidden = online;
 }
 
 function showHome() {
@@ -237,6 +269,7 @@ function showHome() {
     document.body.classList.remove("has-player");
   }
   renderList();
+  updateReciterCard();
 }
 
 function showReader() {
@@ -247,7 +280,8 @@ function showReader() {
 }
 
 function setPlaying(playing) {
-  $("play").textContent = playing ? "إيقاف" : "تشغيل";
+  $("play").textContent = playing ? "❚❚" : "▶";
+  $("play").setAttribute("aria-label", playing ? "إيقاف" : "تشغيل");
 }
 
 async function prepareAudio(number, resume) {
@@ -299,7 +333,7 @@ async function downloadOne(number, quiet) {
 
 function downloadHint() {
   const count = savedCount();
-  $("download-hint").textContent = `المحفوظ بصوت ${reciterName(state.reciter)}: ${ar(count)} من ${ar(114)}. جزء عمّ أخف، والمصحف الكامل يأخذ مساحة أكبر. التنزيل يبقى في هذا المتصفح.`;
+  $("download-hint").textContent = `المحفوظ بصوت ${reciterName(state.reciter)}: ${ar(count)} من ${ar(114)}. جزء عمّ أخف، والمصحف الكامل يأخذ مساحة أكبر.`;
 }
 
 function openDownload() {
@@ -309,6 +343,29 @@ function openDownload() {
   $("download-progress").hidden = true;
   downloadHint();
   $("download").hidden = false;
+}
+
+function openReciterSheet() {
+  renderReciters();
+  $("reciter-sheet").hidden = false;
+}
+
+async function chooseReciter(id) {
+  if (!id || id === state.reciter) {
+    $("reciter-sheet").hidden = true;
+    return;
+  }
+  state.reciter = id;
+  localStorage.setItem("mushaf-reciter", state.reciter);
+  $("reciter-sheet").hidden = true;
+  renderReciters();
+  renderList();
+  updateSaveButton();
+  if (!$("reader").hidden) {
+    const playing = !audio.paused;
+    const ready = await prepareAudio(state.surah, false);
+    if (ready && playing) audio.play().catch(() => setPlaying(false));
+  }
 }
 
 async function downloadRange(from, to) {
@@ -329,6 +386,7 @@ async function downloadRange(from, to) {
     const surah = state.quran[number - 1];
     $("download-status").textContent = `جاري تنزيل ${surah.name} · ${ar(done)} من ${ar(total)}`;
     $("download-bar").style.width = `${(done / total) * 100}%`;
+    $("download-sub").textContent = `ينزّل ${surah.name} · ${ar(Math.round((done / total) * 100))}٪`;
     const key = keyOf(state.reciter, number);
     if (!state.saved.has(key)) {
       try {
@@ -349,6 +407,7 @@ async function downloadRange(from, to) {
   $("download-progress").hidden = true;
   $("download-actions").hidden = false;
   downloadHint();
+  updateReciterCard();
   renderList();
   updateSaveButton();
   if (abort.signal.aborted) toast("توقف التنزيل. تقدر تكمّله لاحقًا.");
@@ -364,17 +423,14 @@ async function clearReciter() {
   }
   renderList();
   updateSaveButton();
+  updateReciterCard();
   downloadHint();
   toast("انحذفت تلاوات هذا القارئ من الجهاز.");
 }
 
 function showFatiha() {
   const next = $("fatiha-next");
-  if (state.surah >= 114) {
-    next.textContent = "العودة للفهرس";
-  } else {
-    next.textContent = "السورة التالية";
-  }
+  next.textContent = state.surah >= 114 ? "العودة للفهرس" : "السورة التالية";
   $("fatiha").hidden = false;
   $("fatiha-amen").focus();
 }
@@ -383,61 +439,43 @@ function fillFatiha() {
   $("fatiha-verses").innerHTML = state.quran[0].ayahs
     .map((text) => `<p>${esc(text)}</p>`)
     .join("");
+  $("home-bismillah").textContent = state.quran[0].ayahs[0];
 }
 
 function bind() {
-  $("reciter").addEventListener("change", async () => {
-    state.reciter = $("reciter").value;
-    localStorage.setItem("mushaf-reciter", state.reciter);
-    renderList();
-    updateSaveButton();
-    if (!$("reader").hidden) {
-      const playing = !audio.paused;
-      const ready = await prepareAudio(state.surah, false);
-      if (ready && playing) audio.play().catch(() => setPlaying(false));
-    }
+  $("toggle-mode").addEventListener("click", () => {
+    state.night = !state.night;
+    applyMode();
+  });
+
+  $("open-reciter").addEventListener("click", openReciterSheet);
+  $("reciter-close").addEventListener("click", () => { $("reciter-sheet").hidden = true; });
+  $("reciter-sheet").addEventListener("click", (event) => {
+    if (event.target === $("reciter-sheet")) $("reciter-sheet").hidden = true;
+  });
+  $("reciter-list").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-reciter]");
+    if (button) chooseReciter(button.dataset.reciter);
   });
 
   $("query").addEventListener("input", renderList);
-  $("filters").addEventListener("click", (event) => {
-    const button = event.target.closest("[data-filter]");
-    if (!button) return;
-    state.filter = button.dataset.filter;
-    for (const chip of $("filters").querySelectorAll(".chip")) {
-      chip.classList.toggle("on", chip === button);
-    }
-    renderList();
-  });
 
-  $("list").addEventListener("click", async (event) => {
-    const save = event.target.closest("[data-save]");
-    if (save) {
-      const number = Number(save.dataset.save);
-      save.disabled = true;
-      save.textContent = "ينزّل";
-      try {
-        await downloadOne(number);
-      } catch {
-        toast("ما نزل التنزيل. تأكد من النت وحاول مرة ثانية.");
-        save.disabled = false;
-        save.textContent = "تنزيل";
-        return;
-      }
-      renderList();
-      return;
-    }
+  $("list").addEventListener("click", (event) => {
     const open = event.target.closest("[data-surah]");
     if (open) openSurah(Number(open.dataset.surah));
   });
 
   $("resume").addEventListener("click", () => {
     const progress = loadProgress();
-    if (!progress) return;
-    if (progress.reciter && RECITERS.some((item) => item.id === progress.reciter)) {
-      state.reciter = progress.reciter;
-      $("reciter").value = state.reciter;
+    if (progress) {
+      if (progress.reciter && RECITERS.some((item) => item.id === progress.reciter)) {
+        state.reciter = progress.reciter;
+        updateReciterCard();
+      }
+      openSurah(progress.surah, { resume: true });
+      return;
     }
-    openSurah(progress.surah, { resume: true });
+    openSurah(1);
   });
 
   $("back").addEventListener("click", showHome);
@@ -462,6 +500,7 @@ function bind() {
       toast("ما نزل التنزيل. تأكد من النت وحاول مرة ثانية.");
     }
     updateSaveButton();
+    updateReciterCard();
     renderList();
   });
 
@@ -472,6 +511,9 @@ function bind() {
     }
     if (audio.paused) audio.play().catch(() => toast("اضغط تشغيل مرة ثانية."));
     else audio.pause();
+  });
+  $("player-info").addEventListener("click", () => {
+    if ($("reader").hidden) openSurah(state.surah);
   });
   $("prev").addEventListener("click", () => {
     if (state.surah > 1) openSurah(state.surah - 1);
@@ -556,6 +598,12 @@ function bind() {
     if (state.downloadAbort) state.downloadAbort.abort();
     $("download").hidden = true;
   });
+  $("download").addEventListener("click", (event) => {
+    if (event.target === $("download")) {
+      if (state.downloadAbort) state.downloadAbort.abort();
+      $("download").hidden = true;
+    }
+  });
   $("dl-amma").addEventListener("click", () => downloadRange(78, 114));
   $("dl-all").addEventListener("click", () => downloadRange(1, 114));
   $("download-cancel").addEventListener("click", () => {
@@ -575,7 +623,7 @@ function bind() {
   window.addEventListener("online", updateNet);
   window.addEventListener("offline", updateNet);
   document.addEventListener("keydown", (event) => {
-    if (event.code !== "Space" || event.target.matches("input, select, textarea")) return;
+    if (event.code !== "Space" || event.target.matches("input, select, textarea, button")) return;
     event.preventDefault();
     $("play").click();
   });
@@ -587,6 +635,7 @@ async function init() {
     return;
   }
   applyScale();
+  applyMode();
   bind();
   updateNet();
   renderReciters();
@@ -605,6 +654,7 @@ async function init() {
   fillFatiha();
   renderList();
   updateResume();
+  updateReciterCard();
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js").catch(() => {});
   }
