@@ -15,7 +15,7 @@
     "backgroundColor": "#071410",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.mushaf.albait",
       "buildNumber": "1",
       "infoPlist": {
