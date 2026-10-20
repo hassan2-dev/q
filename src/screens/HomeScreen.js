@@ -55,12 +55,21 @@ export default function HomeScreen({ navigation }) {
               <Star size={30} />
               <Text style={[styles.bismillah, !night && styles.inkText]}>{BISMILLAH}</Text>
               <Text style={[styles.title, !night && styles.titleDay]}>مصحف البيت</Text>
-              <Text style={[styles.subtitle, !night && styles.softText]}>قراءة هادئة للوالد والوالدة</Text>
+              <Text style={[styles.subtitle, !night && styles.softText]}>قراءة هادئة · مهداة للوالد والوالدة</Text>
               <Pressable onPress={toggleNight} style={[styles.mode, !night && styles.modeDay]} accessibilityRole="button">
                 <Text style={[styles.modeText, !night && styles.inkText]}>{night ? "نهاري" : "ليلي"}</Text>
               </Pressable>
             </View>
             <GoldRule />
+
+            <View style={[styles.dedication, !night && styles.dedicationDay]} accessibilityRole="text">
+              <Text style={styles.dedicationLabel}>إهداء</Text>
+              <Text style={[styles.dedicationTo, !night && styles.inkText]}>إلى الوالد والوالدة</Text>
+              <Text style={[styles.dedicationBody, !night && styles.softText]}>
+                جعل الله قراءة هذا المصحف نورًا في بيوتكم، وذخرًا في ميزان حسناتكم
+              </Text>
+            </View>
+
             {offline ? <Text style={styles.banner}>بدون إنترنت · القراءة وما حُفظ من التلاوة يعملان</Text> : null}
             {notice ? (
               <Pressable onPress={clearNotice}>
@@ -182,6 +191,42 @@ const styles = StyleSheet.create({
   },
   rowDay: {
     backgroundColor: "#fffdf8",
+  },
+  dedication: {
+    marginTop: 4,
+    marginBottom: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.gold,
+    backgroundColor: "rgba(18, 48, 39, 0.72)",
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    alignItems: "center",
+  },
+  dedicationDay: {
+    backgroundColor: colors.parchmentDeep,
+    borderColor: colors.goldDim,
+  },
+  dedicationLabel: {
+    fontFamily: fonts.ui,
+    color: colors.gold,
+    fontSize: 13,
+    letterSpacing: 1,
+  },
+  dedicationTo: {
+    fontFamily: fonts.display,
+    color: colors.goldSoft,
+    fontSize: 28,
+    marginTop: 4,
+    textAlign: "center",
+  },
+  dedicationBody: {
+    fontFamily: fonts.ui,
+    color: colors.nightSoft,
+    fontSize: 15,
+    lineHeight: 24,
+    marginTop: 6,
+    textAlign: "center",
   },
   brand: {
     alignItems: "center",
