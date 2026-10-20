@@ -1,4 +1,4 @@
-const CACHE = "mushaf-albait-v2";
+const CACHE = "mushaf-albait-v3";
 const ASSETS = [
   "./",
   "./index.html",

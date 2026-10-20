@@ -46,25 +46,29 @@
         <p class="banner" id="offline-banner" hidden>بدون إنترنت · القراءة وما حُفظ من التلاوة يعملان</p>
         <p class="notice" id="net-notice" hidden></p>
 
-        <button type="button" class="continue" id="resume">
-          <span class="kicker" id="resume-kicker">ابدأ التلاوة</span>
-          <span class="continue-name" id="resume-name">الفاتحة</span>
-          <span class="continue-meta" id="resume-meta"></span>
-        </button>
+        <div class="home-grid">
+          <button type="button" class="continue" id="resume">
+            <span class="kicker" id="resume-kicker">ابدأ التلاوة</span>
+            <span class="continue-name" id="resume-name">الفاتحة</span>
+            <span class="continue-meta" id="resume-meta"></span>
+          </button>
+
+          <div class="home-side">
+            <button type="button" class="voice" id="open-reciter">
+              <span class="voice-label">القارئ</span>
+              <span class="voice-name" id="reciter-name">مشاري راشد العفاسي</span>
+              <span class="voice-style" id="reciter-style">اضغط للتغيير</span>
+            </button>
+            <select id="reciter" class="visually-hidden" tabindex="-1" aria-hidden="true"></select>
+
+            <button type="button" class="juz" id="open-download">
+              <span class="juz-title">التنزيل</span>
+              <span class="juz-sub" id="download-sub">٠ من ١١٤ سورة</span>
+            </button>
+          </div>
+        </div>
 
         <input id="query" type="search" class="search" placeholder="ابحث باسم السورة أو رقمها" autocomplete="off">
-
-        <button type="button" class="voice" id="open-reciter">
-          <span class="voice-label">القارئ</span>
-          <span class="voice-name" id="reciter-name">مشاري راشد العفاسي</span>
-          <span class="voice-style" id="reciter-style">اضغط للتغيير</span>
-        </button>
-        <select id="reciter" class="visually-hidden" tabindex="-1" aria-hidden="true"></select>
-
-        <button type="button" class="juz" id="open-download">
-          <span class="juz-title">التنزيل</span>
-          <span class="juz-sub" id="download-sub">٠ من ١١٤ سورة</span>
-        </button>
 
         <h2 class="section">السور كما في المصحف</h2>
         <div class="list" id="list"></div>
