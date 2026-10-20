@@ -79,8 +79,33 @@ function reciterName(id) {
   return reciterOf(id).name;
 }
 
-function audioUrl(reciter, number) {
+function streamUrl(reciter, number) {
   return `https://cdn.islamic.network/quran/audio-surah/128/${reciter}/${number}.mp3`;
+}
+
+function proxyUrl(reciter, number) {
+  return `${location.origin}/audio/${encodeURIComponent(reciter)}/${number}.mp3`;
+}
+
+/** Fetch audio as a Blob for IndexedDB. Prefers local proxy (CORS-safe). */
+async function fetchAudioBlob(reciter, number, signal) {
+  const urls = [];
+  if (location.protocol.startsWith("http")) urls.push(proxyUrl(reciter, number));
+  urls.push(streamUrl(reciter, number));
+  let lastError = null;
+  for (const url of urls) {
+    try {
+      const response = await fetch(url, { signal });
+      if (!response.ok) throw new Error(`http ${response.status}`);
+      const blob = await response.blob();
+      if (!blob || blob.size < 2000) throw new Error("empty audio");
+      return blob;
+    } catch (error) {
+      if (error?.name === "AbortError") throw error;
+      lastError = error;
+    }
+  }
+  throw lastError || new Error("download failed");
 }
 
 function keyOf(reciter, number) {
@@ -204,13 +229,18 @@ function renderList() {
     const kind = surah.type === "Meccan" ? "مكية" : "مدنية";
     const on = surah.n === current ? " on" : "";
     return `
-      <button type="button" class="row${on}" data-surah="${surah.n}">
-        <span class="num">${ar(surah.n)}</span>
-        <span class="meta">
-          <span class="name">${esc(surah.name)}</span>
-          <span class="meta-text">${kind} · ${ar(surah.ayahs.length)} آيات${saved ? " · محفوظة" : ""}</span>
-        </span>
-      </button>`;
+      <div class="row${on}">
+        <button type="button" class="row-main" data-surah="${surah.n}">
+          <span class="num">${ar(surah.n)}</span>
+          <span class="meta">
+            <span class="name">${esc(surah.name)}</span>
+            <span class="meta-text">${kind} · ${ar(surah.ayahs.length)} آيات</span>
+          </span>
+        </button>
+        <button type="button" class="row-save${saved ? " saved" : ""}" data-save="${surah.n}">
+          ${saved ? "محفوظة" : "تنزيل"}
+        </button>
+      </div>`;
   }).join("");
 }
 
@@ -294,7 +324,7 @@ async function prepareAudio(number, resume) {
     toast("هذي السورة مو محفوظة. نزّلها وأنت متصل.");
     return false;
   } else {
-    setSource(audioUrl(state.reciter, number));
+    setSource(streamUrl(state.reciter, number));
   }
   state.resumeTime = resume ? Number(loadProgress()?.time || 0) : 0;
   return true;
@@ -314,20 +344,19 @@ async function openSurah(number, options = {}) {
   }
 }
 
-async function downloadOne(number, quiet) {
+async function downloadOne(number, quiet, signal) {
   if (!navigator.onLine) {
     toast("التنزيل يحتاج إنترنت مرة واحدة.");
     return false;
   }
   const key = keyOf(state.reciter, number);
   if (state.saved.has(key)) return true;
-  if (navigator.storage?.persist) navigator.storage.persist();
-  const response = await fetch(audioUrl(state.reciter, number));
-  if (!response.ok) throw new Error(String(number));
-  const blob = await response.blob();
+  if (navigator.storage?.persist) navigator.storage.persist().catch(() => {});
+  const blob = await fetchAudioBlob(state.reciter, number, signal);
   await MushafDb.put(key, blob);
   state.saved.add(key);
   if (!quiet) toast("انحفظت السورة على الجهاز.");
+  updateReciterCard();
   return true;
 }
 
@@ -390,11 +419,7 @@ async function downloadRange(from, to) {
     const key = keyOf(state.reciter, number);
     if (!state.saved.has(key)) {
       try {
-        const response = await fetch(audioUrl(state.reciter, number), { signal: abort.signal });
-        if (!response.ok) throw new Error(String(number));
-        const blob = await response.blob();
-        await MushafDb.put(key, blob);
-        state.saved.add(key);
+        await downloadOne(number, true, abort.signal);
       } catch (error) {
         if (error.name === "AbortError") break;
         failed.push(number);
@@ -460,7 +485,23 @@ function bind() {
 
   $("query").addEventListener("input", renderList);
 
-  $("list").addEventListener("click", (event) => {
+  $("list").addEventListener("click", async (event) => {
+    const save = event.target.closest("[data-save]");
+    if (save) {
+      const number = Number(save.dataset.save);
+      if (state.saved.has(keyOf(state.reciter, number))) return;
+      save.disabled = true;
+      save.textContent = "ينزّل";
+      try {
+        await downloadOne(number);
+        renderList();
+      } catch {
+        toast("ما نزل الملف. افتح المصحف من «ابدأ المصحف» وتأكد من النت.");
+        save.disabled = false;
+        save.textContent = "تنزيل";
+      }
+      return;
+    }
     const open = event.target.closest("[data-surah]");
     if (open) openSurah(Number(open.dataset.surah));
   });
@@ -497,7 +538,7 @@ function bind() {
     try {
       await downloadOne(state.surah);
     } catch {
-      toast("ما نزل التنزيل. تأكد من النت وحاول مرة ثانية.");
+      toast("ما نزل الملف. افتح المصحف من «ابدأ المصحف» وتأكد من النت.");
     }
     updateSaveButton();
     updateReciterCard();

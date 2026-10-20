@@ -1,4 +1,5 @@
 const http = require("http");
+const https = require("https");
 const fs = require("fs");
 const path = require("path");
 const { exec } = require("child_process");
@@ -18,9 +19,69 @@ const types = {
   ".txt": "text/plain; charset=utf-8"
 };
 
+function proxyAudio(req, res, reciter, number) {
+  if (!/^[a-z0-9.]+$/i.test(reciter)) {
+    res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("bad reciter");
+    return;
+  }
+  const n = Number(number);
+  if (!Number.isInteger(n) || n < 1 || n > 114) {
+    res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("bad surah");
+    return;
+  }
+
+  const upstream = `https://cdn.islamic.network/quran/audio-surah/128/${reciter}/${n}.mp3`;
+
+  const request = https.get(upstream, (up) => {
+    if (up.statusCode >= 300 && up.statusCode < 400 && up.headers.location) {
+      up.resume();
+      https.get(up.headers.location, (redirected) => pipeAudio(redirected, res)).on("error", () => fail(res));
+      return;
+    }
+    pipeAudio(up, res);
+  });
+  request.on("error", () => fail(res));
+  req.on("close", () => request.destroy());
+}
+
+function pipeAudio(up, res) {
+  if (up.statusCode !== 200) {
+    up.resume();
+    res.writeHead(up.statusCode || 502, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("upstream error");
+    return;
+  }
+  const headers = {
+    "Content-Type": up.headers["content-type"] || "audio/mpeg",
+    "Cache-Control": "public, max-age=86400",
+    "Access-Control-Allow-Origin": "*"
+  };
+  if (up.headers["content-length"]) headers["Content-Length"] = up.headers["content-length"];
+  res.writeHead(200, headers);
+  up.pipe(res);
+}
+
+function fail(res) {
+  if (res.headersSent) {
+    res.end();
+    return;
+  }
+  res.writeHead(502, { "Content-Type": "text/plain; charset=utf-8" });
+  res.end("bad gateway");
+}
+
 function handler(req, res) {
   let urlPath = decodeURIComponent((req.url || "/").split("?")[0]);
   if (urlPath === "/") urlPath = "/index.html";
+
+  const audioMatch = urlPath.match(/^\/audio\/([^/]+)\/(\d+)\.mp3$/i);
+  if (audioMatch) {
+    proxyAudio(req, res, audioMatch[1], audioMatch[2]);
+    return;
+  }
+
   const file = path.normalize(path.join(root, urlPath));
   if (!file.startsWith(root)) {
     res.writeHead(403);

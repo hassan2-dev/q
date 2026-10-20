@@ -1,4 +1,4 @@
-const CACHE = "mushaf-albait-v1";
+const CACHE = "mushaf-albait-v2";
 const ASSETS = [
   "./",
   "./index.html",
@@ -8,6 +8,7 @@ const ASSETS = [
   "./data/quran.json",
   "./manifest.webmanifest",
   "./icon.svg",
+  "./fonts/AmiriQuran-Regular.ttf",
   "./fonts/Amiri-Regular.ttf",
   "./fonts/Amiri-Bold.ttf",
   "./fonts/ArefRuqaa-Regular.ttf",
@@ -34,6 +35,11 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
+  // Audio proxy / downloads: network only (do not poison cache with partials)
+  if (url.pathname.startsWith("/audio/")) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
   event.respondWith(
     fetch(event.request)
       .then((response) => {
